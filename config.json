@@ -1,0 +1,6 @@
+{
+    "SCREEN_SIZE": [960, 540],
+    "FPS": 60,
+    "CHUNK_SIZE": 8,
+    "TILE_SIZE": 24
+}
