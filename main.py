@@ -1,17 +1,11 @@
-import logging
 import pygame; pygame.init()
-import config
-import models
 import sys
 from math import ceil
+import config
+import gamemap
+from character import Character
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(name)s:'
-                           '\t%(message)s',
-                    datefmt='%y.%b.%Y %H:%M:%S')
-
-logger = logging.getLogger('main')
-
+pygame.display.set_caption('NOSOK ADVENTURE')
 screen = pygame.display.set_mode(config.SCREEN_SIZE)
 screen.fill(pygame.color.Color('Black'))
 
@@ -24,7 +18,9 @@ del chunk_pix_size
 chunks = []
 for x in range(chunks_amount[0]):
     for y in range(chunks_amount[1]):
-        chunks.append(models.Chunk(x, y))
+        chunks.append(gamemap.Chunk(x, y))
+
+character = Character()
 
 while 1:
     for event in pygame.event.get():
@@ -32,8 +28,14 @@ while 1:
             pygame.quit()
             sys.exit()
 
+        character.update_state(event)
+
     for i in chunks:
-        i.render()
+        i.render(screen)
+
+    character.update()
+    character.render(screen)
 
     pygame.display.flip()
+   
     clock.tick(config.FPS)

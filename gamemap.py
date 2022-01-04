@@ -14,8 +14,7 @@ class Chunk:
         self.size = config.CHUNK_SIZE
         self.x, self.y = x, y
 
-    def render(self):
-        screen = pygame.display.get_surface()
+    def render(self, screen):
         for y in range(self.size):
             for x in range(self.size):
                 screen.blit(Textures.GRASS.value,
