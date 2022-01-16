@@ -2,6 +2,8 @@ import pygame
 from enum import Enum
 from PIL import Image, ImageOps
 
+SCALE = 1.7
+
 
 class Orientation(Enum):
     RIGHT = 0
@@ -22,15 +24,17 @@ class Character:
         self.load()
 
     def load(self):
+        path = 'assets/character/'
+
         # Loading assets for idle state
-        idle = Image.open(r'assets\char\Idle.png').convert('RGB')
+        idle = Image.open(f'{path}Idle.png').convert('RGBA')
         side = idle.height
 
         steps = idle.width // side
         idle_states_right, idle_states_left = [], []
         for i in range(steps):
             img = idle.crop((side * i, 0, side * (i + 1), side))
-            img = img.resize((side * 2, side * 2))
+            img = img.resize((int(side * SCALE), int(side * SCALE)))
 
             idle_states_right.append(
                 pygame.image.frombuffer(img.tobytes(),
@@ -47,14 +51,14 @@ class Character:
             )
 
         # Loading assets for walking state
-        walk = Image.open(r'assets\char\Walk.png').convert('RGBA')
+        walk = Image.open(f'{path}Walk.png').convert('RGBA')
         side = walk.height
 
         steps = walk.width // side
         walk_states_right, walk_states_left = [], []
         for i in range(steps):
             img = walk.crop((side * i, 0, side * (i + 1), side))
-            img = img.resize((side * 2, side * 2))
+            img = img.resize((int(side * SCALE), int(side * SCALE)))
 
             walk_states_right.append(
                 pygame.image.fromstring(img.tobytes(),

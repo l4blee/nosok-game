@@ -5,15 +5,16 @@ import pygame
 from enum import Enum
 
 
+
 class Textures(Enum):
     ALIASES = {
         '#': 'GRASS',
         '.': 'DIRT'
     }
 
-    GRASS = pygame.transform.scale(load_image('grass.png'),
+    GRASS = pygame.transform.scale(load_image('tiles/grass.png'),
                                    (config.TILE_SIZE, config.TILE_SIZE))
-    DIRT = pygame.transform.scale(load_image('dirt.png'),
+    DIRT = pygame.transform.scale(load_image(f'tiles/dirt.png'),
                                   (config.TILE_SIZE, config.TILE_SIZE))
 
 
@@ -37,11 +38,16 @@ class Chunk:
 
     def render(self, screen):
         for tile in self.tiles:
-            screen.blit(
-                tile.texture.value,
-                (self.x * self.size * config.TILE_SIZE + tile.x * tile.size,
-                 self.y * self.size * config.TILE_SIZE + tile.y * tile.size)
-            )
+            coords = (self.x * self.size * config.TILE_SIZE + tile.x * tile.size,
+                      self.y * self.size * config.TILE_SIZE + tile.y * tile.size)
+
+            if 0 - config.TILE_SIZE // 2 < coords[0] < config.SCREEN_SIZE[0] or\
+                 0 - config.TILE_SIZE // 2 < coords[1] < config.SCREEN_SIZE[1]:
+                screen.blit(
+                    tile.texture.value,
+                    (self.x * self.size * config.TILE_SIZE + tile.x * tile.size,
+                    self.y * self.size * config.TILE_SIZE + tile.y * tile.size)
+                )
 
     def __repr__(self):
         return f'Chunk(x={self.x}, y={self.y})'
