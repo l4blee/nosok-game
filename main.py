@@ -1,8 +1,9 @@
-import pygame; pygame.init()
 import sys
-from math import ceil
+
+import pygame; pygame.init()
+
 import config
-import gamemap
+from gamemap import Map
 from character import Character
 
 pygame.display.set_caption('NOSOK ADVENTURE')
@@ -11,18 +12,15 @@ screen.fill(pygame.color.Color('Black'))
 
 clock = pygame.time.Clock()
 
-chunk_pix_size = config.CHUNK_SIZE * config.TILE_SIZE
-chunks_amount = [ceil(i / chunk_pix_size) for i in config.SCREEN_SIZE]
-del chunk_pix_size
 
-chunks = []
-for x in range(chunks_amount[0]):
-    for y in range(chunks_amount[1]):
-        chunks.append(gamemap.Chunk(x, y))
+with open('map.txt') as f:
+    data = list(map(str.rstrip, f.readlines()))
+    gamemap = Map(*data)
 
 character = Character()
 
 while 1:
+    screen.fill(pygame.color.Color('Black'))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -30,12 +28,10 @@ while 1:
 
         character.update_state(event)
 
-    for i in chunks:
-        i.render(screen)
+    gamemap.render(screen)
 
     character.update()
     character.render(screen)
 
     pygame.display.flip()
-   
     clock.tick(config.FPS)
