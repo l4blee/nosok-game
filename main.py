@@ -27,6 +27,7 @@ while 1:
             sys.exit()
 
         character.update_state(event)
+        gamemap.update(event)
 
     gamemap.render(screen)
 

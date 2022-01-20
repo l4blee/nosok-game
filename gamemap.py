@@ -35,18 +35,14 @@ class Chunk:
         self.size = config.CHUNK_SIZE
         self.x, self.y = x, y
 
-    def render(self, screen):
+    def render(self, screen, offset_x, offset_y):
         for tile in self.tiles:
-            coords = (self.x * self.size * config.TILE_SIZE + tile.x * tile.size,
-                      self.y * self.size * config.TILE_SIZE + tile.y * tile.size)
+            coords = (self.x * self.size * config.TILE_SIZE + tile.x * tile.size + offset_x,
+                      self.y * self.size * config.TILE_SIZE + tile.y * tile.size + offset_y)
 
             if 0 - config.TILE_SIZE // 2 < coords[0] < config.SCREEN_SIZE[0] or\
                     0 - config.TILE_SIZE // 2 < coords[1] < config.SCREEN_SIZE[1]:
-                screen.blit(
-                    tile.texture.value,
-                    (self.x * self.size * config.TILE_SIZE + tile.x * tile.size,
-                     self.y * self.size * config.TILE_SIZE + tile.y * tile.size)
-                )
+                screen.blit(tile.texture.value, coords)
 
     def __repr__(self):
         return f'Chunk(x={self.x}, y={self.y})'
@@ -54,6 +50,7 @@ class Chunk:
 
 class Map:
     def __init__(self, *data):
+        self.offset_x, self.offset_y = 0, 0
         self.map: list[Chunk] = self.load_data(*data)
 
     def load_data(self, *data):
@@ -97,7 +94,24 @@ class Map:
     def render(self, screen):
         for row in self.map:
             for chunk in row:
-                chunk.render(screen)
+                chunk.render(screen, self.offset_x, self.offset_y)
+
+    def update(self, event: pygame.event.Event):
+        x, y = 0, 0
+
+        pressed = pygame.key.get_pressed()
+        if pressed[pygame.K_w]:
+            y = 1
+        elif pressed[pygame.K_s]:
+            y = -1
+
+        if pressed[pygame.K_a]:
+            x = 1
+        elif pressed[pygame.K_d]:
+            x = -1
+        
+        self.offset_x += x * config.STEP
+        self.offset_y += y * config.STEP
 
 
 if __name__ == '__main__':
