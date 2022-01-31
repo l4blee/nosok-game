@@ -11,13 +11,14 @@ screen = pygame.display.set_mode(config.SCREEN_SIZE)
 screen.fill(pygame.color.Color('Black'))
 
 clock = pygame.time.Clock()
-
+group = pygame.sprite.Group()
 
 with open('map.txt') as f:
     data = list(map(str.rstrip, f.readlines()))
     gamemap = Map(*data)
 
 character = Character()
+group.add(character)
 
 while 1:
     screen.fill(pygame.color.Color('Black'))
@@ -26,13 +27,11 @@ while 1:
             pygame.quit()
             sys.exit()
 
-        character.update_state(event)
+        character.update(event)
         gamemap.update(event)
 
     gamemap.render(screen)
-
-    character.update()
-    character.render(screen)
+    group.draw(screen)
 
     pygame.display.flip()
     clock.tick(config.FPS)

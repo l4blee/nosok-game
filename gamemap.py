@@ -17,12 +17,17 @@ class Textures(Enum):
                                   (config.TILE_SIZE, config.TILE_SIZE))
 
 
-class Tile:
-    def __init__(self, x: int, y: int, texture: Textures):
-        self.texture = texture
+class Tile(pygame.sprite.Sprite):
+    def __init__(self, x: int, y: int, texture, *args):
+        super().__init__(*args)
+
+        self.image = texture.value
+        self.rect = texture.value.get_rect()
 
         self.size = config.TILE_SIZE
         self.x, self.y = x, y
+
+        self.rect = self.rect.move(x * self.size, y * self.size)
 
     def __repr__(self):
         return f'Tile(x={self.x}, y={self.y}, t={self.texture.name})'
@@ -30,7 +35,7 @@ class Tile:
 
 class Chunk:
     def __init__(self, x: int, y: int, *tiles: list[Tile]):
-        self.tiles = tiles
+        self.tiles = pygame.sprite.Group(*tiles)
 
         self.size = config.CHUNK_SIZE
         self.x, self.y = x, y
@@ -42,7 +47,7 @@ class Chunk:
 
             if 0 - config.TILE_SIZE // 2 < coords[0] < config.SCREEN_SIZE[0] or\
                     0 - config.TILE_SIZE // 2 < coords[1] < config.SCREEN_SIZE[1]:
-                screen.blit(tile.texture.value, coords)
+                screen.blit(tile.image, coords)
 
     def __repr__(self):
         return f'Chunk(x={self.x}, y={self.y})'
@@ -72,6 +77,7 @@ class Map:
                         chunk.append(j[i])
 
                     chunks_total.append(chunk)
+                chunk_block = []
 
                 chunk_row = []
                 for chunk_y, str_chunk in enumerate(chunks_total):
@@ -87,7 +93,6 @@ class Map:
                     chunk_row.append(chunk)
 
                 chunks.append(chunk_row)
-                chunk_block = []
 
         return chunks
 
@@ -109,7 +114,7 @@ class Map:
             x = 1
         elif pressed[pygame.K_d]:
             x = -1
-        
+
         self.offset_x += x * config.STEP
         self.offset_y += y * config.STEP
 

@@ -15,8 +15,10 @@ class State(Enum):
     WALK = 1
 
 
-class Character:
-    def __init__(self):
+class Character(pygame.sprite.Sprite):
+    def __init__(self, *args):
+        super().__init__(*args)
+
         self.state: State = State['IDLE']
         self.orientation: Orientation = Orientation['RIGHT']
         self.tick: float = 0
@@ -61,7 +63,7 @@ class Character:
             img = img.resize((int(side * SCALE), int(side * SCALE)))
 
             walk_states_right.append(
-                pygame.image.fromstring(img.tobytes(),
+                pygame.image.frombuffer(img.tobytes(),
                                         img.size,
                                         img.mode)
                 )
@@ -97,7 +99,9 @@ class Character:
 
         self.state = state
 
-    def update(self):
+    def update(self, event):
+        self.update_state(event)
+
         self.tick += 1 / 10
         self.tick %= len(
             eval(f'self.{self.state.name.lower()}'
@@ -105,14 +109,14 @@ class Character:
                  f'{self.orientation.name.lower()}')
         )
 
-    def render(self, screen):
         image = eval(f'self.{self.state.name.lower()}'
                      '_states_'
                      f'{self.orientation.name.lower()}')[int(self.tick)]
         image.set_colorkey(image.get_at((0, 0)))
 
-        screen.blit(
-            image,
-            (screen.get_width() // 2 - image.get_width() // 2,
-             screen.get_height() // 2 - image.get_height() // 2)
-        )
+        screen = pygame.display.get_surface()
+
+        self.image = image
+        self.rect = image.get_rect()
+        self.rect = self.rect.move(screen.get_width() // 2 - image.get_width() // 2,
+                                   screen.get_height() // 2 - image.get_height() // 2)

@@ -3,5 +3,5 @@
     "FPS": 60,
     "CHUNK_SIZE": 8,
     "TILE_SIZE": 32,
-    "STEP": 10
+    "STEP": 3
 }
